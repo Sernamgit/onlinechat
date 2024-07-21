@@ -33,6 +33,9 @@ public class ClientHandler {
                             sendMessage("/exitok");
                             break;
                         }
+                        if (message.startsWith("/w")) {
+                            sendPrivateMessage(message);
+                        }
                         continue;
                     }
                     server.broadcastMessage(username + ": " + message);
@@ -53,6 +56,17 @@ public class ClientHandler {
         } catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    public void sendPrivateMessage(String message){
+        String withoutCommand = message.substring(3);
+        int spaceIndex = withoutCommand.indexOf(" ");
+        if (spaceIndex != -1){
+            server.privateMessage(withoutCommand.substring(spaceIndex + 1), withoutCommand.substring(0, spaceIndex), this);
+        } else {
+            this.sendMessage("Не корректная команда");
+        }
+
     }
 
     public void disconnect(){
