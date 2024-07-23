@@ -43,4 +43,23 @@ public class Server {
             c.sendMessage(message);
         }
     }
+
+    public void privateMessage(String message, String receiver, ClientHandler owner) {
+        ClientHandler user = getUser(receiver);
+        if (user == null) {
+            owner.sendMessage("Пользователь не найден");
+        } else {
+            user.sendMessage("Личное сообщение от " + owner.getUsername() + ": " + message);
+            owner.sendMessage("Отправлено сообщение пользователю " + user.getUsername() + ": " + message);
+        }
+    }
+
+    private ClientHandler getUser(String user) {
+        for (ClientHandler c : clients) {
+            if (c.getUsername().equals(user)) {
+                return c;
+            }
+        }
+        return null;
+    }
 }
