@@ -15,7 +15,7 @@ public class ClientHandler {
 
     private static int userCount = 0;
 
-    public ClientHandler(Server server,Socket socket) throws IOException {
+    public ClientHandler(Server server, Socket socket) throws IOException {
         this.server = server;
         this.socket = socket;
         this.in = new DataInputStream(socket.getInputStream());
@@ -23,13 +23,13 @@ public class ClientHandler {
         userCount++;
         this.username = "user" + userCount;
         new Thread(() -> {
-            try{
+            try {
 
                 System.out.println("Подключился новый клиент");
-                while (true){
+                while (true) {
                     String message = in.readUTF();
-                    if (message.startsWith("/")){
-                        if (message.equals("/exit")){
+                    if (message.startsWith("/")) {
+                        if (message.equals("/exit")) {
                             sendMessage("/exitok");
                             break;
                         }
@@ -41,7 +41,7 @@ public class ClientHandler {
                     server.broadcastMessage(username + ": " + message);
 
                 }
-            } catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             } finally {
                 disconnect();
@@ -50,26 +50,24 @@ public class ClientHandler {
         }).start();
     }
 
-    public void sendMessage(String message){
-        try{
+    public void sendMessage(String message) {
+        try {
             out.writeUTF(message);
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void sendPrivateMessage(String message){
-        String withoutCommand = message.substring(3);
-        int spaceIndex = withoutCommand.indexOf(" ");
-        if (spaceIndex != -1){
-            server.privateMessage(withoutCommand.substring(spaceIndex + 1), withoutCommand.substring(0, spaceIndex), this);
+    public void sendPrivateMessage(String message) {
+        String[] command = message.split(" ", 3);
+        if (command.length == 3) {
+            server.privateMessage(command[2], command[1], this);
         } else {
             this.sendMessage("Не корректная команда");
         }
-
     }
 
-    public void disconnect(){
+    public void disconnect() {
         server.unsubscribe(this);
         try {
             if (in != null) {

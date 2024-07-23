@@ -50,6 +50,7 @@ public class Server {
             owner.sendMessage("Пользователь не найден");
         } else {
             user.sendMessage("Личное сообщение от " + owner.getUsername() + ": " + message);
+            owner.sendMessage("Отправлено сообщение пользователю " + user.getUsername() + ": " + message);
         }
     }
 
