@@ -8,30 +8,25 @@ import java.util.List;
 public class Server {
     private int port;
     private List<ClientHandler> clients;
-    private AuthenticationProvider authenticationProvider;
-
-    public AuthenticationProvider getAuthenticationProvider() {
-        return authenticationProvider;
-    }
 
     public Server(int port) {
         this.port = port;
         this.clients = new ArrayList<>();
-        this.authenticationProvider = new InMemoryAuthenticationProvider(this);
     }
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Сервер запущен на порту: " + port);
-            authenticationProvider.initialize();
             while (true) {
                 Socket socket = serverSocket.accept();
-                new ClientHandler(this, socket);
+                subscribe(new ClientHandler(this, socket));
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     public synchronized void subscribe(ClientHandler clientHandler) {
         broadcastMessage("В чат зашел: " + clientHandler.getUsername());
@@ -49,12 +44,22 @@ public class Server {
         }
     }
 
-    public boolean isUsernameBusy(String username) {
+    public void privateMessage(String message, String receiver, ClientHandler owner) {
+        ClientHandler user = getUser(receiver);
+        if (user == null) {
+            owner.sendMessage("Пользователь не найден");
+        } else {
+            user.sendMessage("Личное сообщение от " + owner.getUsername() + ": " + message);
+            owner.sendMessage("Отправлено сообщение пользователю " + user.getUsername() + ": " + message);
+        }
+    }
+
+    private ClientHandler getUser(String user) {
         for (ClientHandler c : clients) {
-            if (c.getUsername().equals(username)) {
-                return true;
+            if (c.getUsername().equals(user)) {
+                return c;
             }
         }
-        return false;
+        return null;
     }
 }
