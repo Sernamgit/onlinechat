@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryAuthenticationProvider implements AuthenticationProvider {
-
     private class User {
         private String login;
         private String password;
@@ -23,14 +22,9 @@ public class InMemoryAuthenticationProvider implements AuthenticationProvider {
     public InMemoryAuthenticationProvider(Server server) {
         this.server = server;
         this.users = new ArrayList<>();
-        this.users.add(new User("login1", "pass1", "user1"));
+        this.users.add(new User("login1", "pass1", "bob"));
         this.users.add(new User("login2", "pass2", "user2"));
         this.users.add(new User("login3", "pass3", "user3"));
-    }
-
-
-    public InMemoryAuthenticationProvider(List<User> users) {
-        this.users = users;
     }
 
     @Override
@@ -69,11 +63,11 @@ public class InMemoryAuthenticationProvider implements AuthenticationProvider {
     public synchronized boolean authenticate(ClientHandler clientHandler, String login, String password) {
         String authUsername = getUsernameByLoginAndPassword(login, password);
         if (authUsername == null) {
-            clientHandler.sendMessage("Некорректный логин/пароль");
+            clientHandler.sendMessage("Некорретный логин/пароль");
             return false;
         }
         if (server.isUsernameBusy(authUsername)) {
-            clientHandler.sendMessage("Указанная учетная запись занята");
+            clientHandler.sendMessage("Указанная учетная запись уже занята");
             return false;
         }
         clientHandler.setUsername(authUsername);
