@@ -14,6 +14,10 @@ public class Server {
         return authenticationProvider;
     }
 
+    public List<ClientHandler> getClients() {
+        return clients;
+    }
+
     public Server(int port) {
         this.port = port;
         this.clients = new ArrayList<>();
@@ -56,5 +60,20 @@ public class Server {
             }
         }
         return false;
+    }
+
+    public synchronized void kickUser(String username) {
+        ClientHandler clientToKick = null;
+        for (ClientHandler c : clients) {
+            if (c.getUsername().equals(username)) {
+                clientToKick = c;
+                break;
+            }
+        }
+        if (clientToKick != null) {
+            clientToKick.sendMessage("/kicked");
+            clientToKick.disconnect();
+            broadcastMessage("Пользователь " + username + " был отключен администратором.");
+        }
     }
 }
