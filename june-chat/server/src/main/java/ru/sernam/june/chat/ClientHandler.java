@@ -11,6 +11,7 @@ public class ClientHandler {
     private DataInputStream in;
     private DataOutputStream out;
     private String username;
+    private UserRole userRole;
 
     public String getUsername() {
         return username;
@@ -18,6 +19,14 @@ public class ClientHandler {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public UserRole getRole() {
+        return userRole;
+    }
+
+    public void setRole(UserRole userRole) {
+        this.userRole = userRole;
     }
 
     public ClientHandler(Server server, Socket socket) throws IOException {
@@ -64,6 +73,14 @@ public class ClientHandler {
                         if (message.equals("/exit")) {
                             sendMessage("/exitok");
                             break;
+                        }
+                        if (message.startsWith("/kick ") && userRole == UserRole.ADMIN) {
+                            String[] elements = message.split(" ");
+                            if (elements.length == 2) {
+                                server.kickUser(elements[1]);
+                            } else {
+                                sendMessage("Неверный формат команды /kick username");
+                            }
                         }
                         continue;
                     }

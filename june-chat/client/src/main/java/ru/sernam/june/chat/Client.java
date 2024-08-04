@@ -23,6 +23,10 @@ public class Client {
                     if (message.equals("/exitok")) {
                         break;
                     }
+                    if (message.equals("/kicked")) {
+                        System.out.println("Вы были отключены администратором.");
+                        break;
+                    }
                     if (message.startsWith("/authok ")) {
                         System.out.println("Удалось успешно войти в чат под именем пользователя: " + message.split(" ")[1]);
                         continue;
