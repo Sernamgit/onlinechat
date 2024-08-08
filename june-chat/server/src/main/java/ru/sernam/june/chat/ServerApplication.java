@@ -1,8 +1,14 @@
 package ru.sernam.june.chat;
 
 
+import java.sql.SQLException;
+
 public class ServerApplication {
     public static void main(String[] args) {
-        new Server(8189).start();
+        try {
+            new Server(8189).start();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
