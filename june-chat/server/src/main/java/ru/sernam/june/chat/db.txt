@@ -1,0 +1,19 @@
+CREATE TABLE Users (
+    id SERIAL PRIMARY KEY,
+    login TEXT NOT NULL,
+    passsword TEXT NOT NULL,
+	username TEXT NOT NULL
+);
+
+CREATE TABLE Role (
+    id SERIAL PRIMARY KEY,
+    role VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE user_to_role (
+	role_id INT,
+	user_id INT,
+	CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES users(id),
+	CONSTRAINT role_fk FOREIGN KEY (role_id) REFERENCES role(id),
+	PRIMARY KEY (user_id, role_id)
+);

@@ -2,6 +2,7 @@ package ru.sernam.june.chat;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +15,10 @@ public class Server {
         return authenticationProvider;
     }
 
-    public Server(int port) {
+    public Server(int port) throws SQLException {
         this.port = port;
         this.clients = new ArrayList<>();
-        this.authenticationProvider = new InMemoryAuthenticationProvider(this);
+        this.authenticationProvider = new JDBCAuthenticationProvider(this, "jdbc:postgresql://localhost:5432/JuneChat", "postgres", "postgres");
     }
 
     public void start() {
